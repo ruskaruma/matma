@@ -205,3 +205,16 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Matma-specific additions
+data/faiss_index/
+data/embeddings/
+*.gguf
+*.pt
+*.bin
+*.ckpt
+models/
+*.npy
+*.log
+*.env
+notebooks/.ipynb_checkpoints/
