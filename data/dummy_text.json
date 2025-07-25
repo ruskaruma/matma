@@ -1,0 +1,15 @@
+
+[
+  {
+    "title": "Introduction to Language Models",
+    "text": "Language models are trained to predict the next token in a sequence..."
+  },
+  {
+    "title": "Multimodal Embedding Approaches",
+    "text": "Combining text and image embeddings enables richer semantic search capabilities."
+  },
+  {
+    "title": "FAISS for Scalable Similarity Search",
+    "text": "FAISS enables fast nearest neighbor search using vector indexing techniques."
+  }
+]

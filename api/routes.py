@@ -1,27 +1,39 @@
-#Code for api/routes.py
+from fastapi import APIRouter, Request
+from pydantic import BaseModel
+from typing import List
+import hashlib
 
-from fastapi import APIRouter, Query
-from typing import Optional
+from scripts.rag_pipeline import generate_answer
+from scripts.faiss_utils import search_faiss_index
 
-router=APIRouter()
+# Basic in-memory cache
+query_cache = {}
 
+router = APIRouter()
 
-@router.get("/health")
-def health_check():
-    return {"status": "ok", "message": "Matma API is running"}
-
-
-@router.get("/search")
-def search(q: str=Query(..., description="Search query string")):
-    # Placeholder logic (replace with vector search + rerank later)
-    return {
-        "query": q,
-        "results": [
-            {"id": 1, "title": "Example Paper 1", "score": 0.93},
-            {"id": 2, "title": "Example Paper 2", "score": 0.89},
-        ],
-    }
+class SearchQuery(BaseModel):
+    query: str
 
 @router.get("/")
 def root():
     return {"message": "Welcome to Matma — Multimodal LLM Search API"}
+
+@router.post("/rag-search")
+def rag_search(query: SearchQuery):
+    q = query.query.strip()
+
+    # Hash query for cache key
+    key = hashlib.sha256(q.encode()).hexdigest()
+
+    # Check cache
+    if key in query_cache:
+        return query_cache[key]
+
+    # Search and generate response
+    search_results = search_faiss_index(q)
+    response = generate_answer(q, search_results)
+
+    # Cache the result
+    query_cache[key] = response
+
+    return response
